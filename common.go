@@ -6,6 +6,7 @@ import (
 	"github.com/akrck02/valhalla-api-common/configuration"
 	"github.com/akrck02/valhalla-api-common/middleware"
 	"github.com/akrck02/valhalla-api-common/models"
+	"github.com/akrck02/valhalla-api-common/services"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
 	"github.com/gin-gonic/gin"
@@ -47,6 +48,12 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + "/" + endpoint.Path
 		newEndpoints = append(newEndpoints, endpoint)
 	}
+
+	newEndpoints = append(newEndpoints, models.Endpoint{
+		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/",
+		Method:   http.HTTP_METHOD_GET,
+		Listener: services.ValhallaCoreInfoHttp,
+	})
 
 	// Register middleware
 	router.Use(middleware.Request())
