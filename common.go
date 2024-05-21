@@ -76,7 +76,7 @@ func registerEndpoints(router *gin.Engine, endpoints []models.Endpoint) {
 
 	for _, endpoint := range endpoints {
 
-		log.FormattedInfo("Registering endpoint ${0} ${1}", endpoint.Path)
+		log.FormattedInfo("Registering endpoint ${0}", endpoint.Path)
 
 		switch endpoint.Method {
 		case http.HTTP_METHOD_GET:
