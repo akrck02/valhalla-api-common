@@ -26,7 +26,7 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	log.ShowLogAppTitle(configuration.ApiName + " API")
+	log.ShowLogAppTitle("Valhalla " + configuration.ApiName + " API")
 	router := gin.Default()
 	router.NoRoute(middleware.NotFound())
 
