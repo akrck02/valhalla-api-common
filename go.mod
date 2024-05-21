@@ -4,7 +4,7 @@ go 1.21.8
 
 require (
 	github.com/akrck02/valhalla-core-dal v0.0.2
-	github.com/akrck02/valhalla-core-sdk v0.0.7
+	github.com/akrck02/valhalla-core-sdk v0.0.8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/itsjamie/gin-cors v0.0.0-20220228161158-ef28d3d2a0a8
 	github.com/joho/godotenv v1.5.1
