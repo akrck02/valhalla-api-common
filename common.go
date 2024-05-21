@@ -26,7 +26,7 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	log.ShowLogAppTitle()
+	log.ShowLogAppTitle(configuration.ApiName + " API")
 	router := gin.Default()
 	router.NoRoute(middleware.NotFound())
 
@@ -44,7 +44,6 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 
 	// Add API path to endpoints
 	for _, endpoint := range endpoints {
-		log.FormattedInfo("Endpoint ${0} registered", API_PATH+configuration.ApiName+"/"+configuration.Version+"/"+endpoint.Path)
 		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + "/" + endpoint.Path
 		newEndpoints = append(newEndpoints, endpoint)
 	}
@@ -76,7 +75,7 @@ func registerEndpoints(router *gin.Engine, endpoints []models.Endpoint) {
 
 	for _, endpoint := range endpoints {
 
-		log.FormattedInfo("Registering endpoint ${0}", endpoint.Path)
+		log.FormattedInfo("Endpoint ${0} registered.", endpoint.Path)
 
 		switch endpoint.Method {
 		case http.HTTP_METHOD_GET:
