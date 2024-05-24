@@ -1,0 +1,26 @@
+{
+    "clientName": "Thunder Client",
+    "environmentName": "valhalla-x-api-dev",
+    "environmentId": "308baf11-ae59-432f-be7a-c8259169d6e5",
+    "dateExported": "2024-05-24T22:35:13.739Z",
+    "version": "1.2",
+    "variables": [
+        {
+            "name": "valhalla.api.host",
+            "value": "127.0.0.1"
+        },
+        {
+            "name": "valhalla.api.token",
+            "value": "3333"
+        },
+        {
+            "name": "valhalla.api.name",
+            "value": "x"
+        },
+        {
+            "name": "valhalla.api.version",
+            "value": "v0.0.1"
+        }
+    ],
+    "ref": "p805zisGU_n_6StzM2kS56Bq3Vu72qzyKvhLHAFQdIjyHve6g00e1kOxKylEOlE7"
+}
