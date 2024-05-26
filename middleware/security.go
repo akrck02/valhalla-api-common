@@ -3,12 +3,11 @@ package middleware
 import (
 	apiModels "github.com/akrck02/valhalla-api-common/models"
 
-	"github.com/akrck02/valhalla-core-dal/database"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
-	"github.com/akrck02/valhalla-core-sdk/error"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
 	"github.com/akrck02/valhalla-core-sdk/models"
+	"github.com/akrck02/valhalla-core-sdk/valerror"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,18 +48,13 @@ func Security(endpoints []apiModels.Endpoint) gin.HandlerFunc {
 		if token == "" {
 			c.AbortWithStatusJSON(
 				http.HTTP_STATUS_FORBIDDEN,
-				gin.H{"code": error.INVALID_TOKEN, "message": "Missing token"},
+				gin.H{"code": valerror.INVALID_TOKEN, "message": "Missing token"},
 			)
 			return
 		}
 
-		// Create a database connection
-		client := database.CreateClient()
-		conn := database.Connect(*client)
-		defer database.Disconnect(*client, conn)
-
 		// Check if token is valid
-		user, err := userdal.IsTokenValid(client, token)
+		user, err := userdal.IsTokenValid(token)
 
 		if err != nil {
 			c.AbortWithStatusJSON(

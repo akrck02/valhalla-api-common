@@ -1,6 +1,7 @@
 package services
 
 import (
+	"os"
 	"runtime"
 	"time"
 
@@ -26,15 +27,16 @@ func ValhallaCoreInfoHttp(c *gin.Context) (*models.Response, *models.Error) {
 	return &models.Response{
 		Code: http.HTTP_STATUS_OK,
 		Response: ValhallaCoreInfo{
-			Version: "1.0.0",
+			Version: os.Getenv("VERSION"),
 			License: "GNU GPLv3",
 			Authors: []string{
 				"akrck02",
 				"AlejandroMacazaga",
 				"AnderRod01",
+				"Itros97",
 			},
 			Copyleft:   time.Now().Format("2006"),
-			Repository: "https://github.com/akrck02/valhalla-core",
+			Repository: os.Getenv("REPOSITORY"),
 			GoVersion:  goVersion,
 		},
 	}, nil

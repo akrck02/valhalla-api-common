@@ -61,7 +61,7 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 
 	registerEndpoints(router, newEndpoints)
 
-	log.FormattedInfo("API started on https://${0}:${1}${2}", configuration.Ip, configuration.Port, API_PATH)
+	log.FormattedInfo("API started on http://${0}:${1}${2}", configuration.Ip, configuration.Port, API_PATH)
 	state := router.Run(configuration.Ip + ":" + configuration.Port)
 	log.Error(state.Error())
 
