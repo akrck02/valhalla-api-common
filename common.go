@@ -86,6 +86,8 @@ func registerEndpoints(router *gin.Engine, endpoints []models.Endpoint) {
 			router.PUT(endpoint.Path, middleware.APIResponseManagement(endpoint))
 		case http.HTTP_METHOD_DELETE:
 			router.DELETE(endpoint.Path, middleware.APIResponseManagement(endpoint))
+		case http.HTTP_METHOD_PATCH:
+			router.PATCH(endpoint.Path, middleware.APIResponseManagement(endpoint))
 		}
 	}
 }
