@@ -7,6 +7,7 @@ import (
 
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +20,7 @@ type ValhallaCoreInfo struct {
 	GoVersion  string   `json:"go-version"`
 }
 
-func ValhallaCoreInfoHttp(c *gin.Context) (*models.Response, *models.Error) {
+func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
 
 	// get go version
 	goVersion := runtime.Version()
