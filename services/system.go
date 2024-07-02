@@ -42,3 +42,7 @@ func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext, gin *gin.Context
 		},
 	}, nil
 }
+
+func ValhallaCoreInfoHttpCheck(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
+	return nil, nil
+}

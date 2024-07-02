@@ -12,16 +12,18 @@ type Endpoint struct {
 	Listener EndpointListener `json:"listener"`
 	Checks   EndpointListener `json:"parameterCheck"`
 	Secured  bool             `json:"secured"`
+	Database bool             `json:"database"`
 }
 
 type EndpointListener func(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error)
 
-func EndpointFrom(path string, method int, listener EndpointListener, checks EndpointListener, secured bool) Endpoint {
+func EndpointFrom(path string, method int, listener EndpointListener, checks EndpointListener, secured bool, database bool) Endpoint {
 	return Endpoint{
 		Path:     path,
 		Method:   method,
 		Listener: listener,
 		Checks:   checks,
 		Secured:  secured,
+		Database: database,
 	}
 }

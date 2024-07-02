@@ -26,10 +26,12 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	// show log app title and start router
 	log.ShowLogAppTitle("Valhalla " + configuration.ApiName + " API")
 	router := gin.Default()
 	router.NoRoute(middleware.NotFound())
 
+	// CORS configuration
 	router.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
 		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
@@ -40,18 +42,21 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		ValidateHeaders: false,
 	}))
 
-	newEndpoints := []models.Endpoint{}
-
 	// Add API path to endpoints
+	newEndpoints := []models.Endpoint{}
 	for _, endpoint := range endpoints {
 		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + "/" + endpoint.Path
 		newEndpoints = append(newEndpoints, endpoint)
 	}
 
+	// Add core info endpoint
 	newEndpoints = append(newEndpoints, models.Endpoint{
 		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/",
 		Method:   http.HTTP_METHOD_GET,
 		Listener: services.ValhallaCoreInfoHttp,
+		Checks:   services.ValhallaCoreInfoHttpCheck,
+		Secured:  false,
+		Database: false,
 	})
 
 	// Register middleware
@@ -59,8 +64,10 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 	router.Use(middleware.Security(newEndpoints))
 	router.Use(middleware.Panic())
 
+	// Register endpoints
 	registerEndpoints(router, newEndpoints)
 
+	// Start API
 	log.FormattedInfo("API started on http://${0}:${1}${2}", configuration.Ip, configuration.Port, API_PATH)
 	state := router.Run(configuration.Ip + ":" + configuration.Port)
 	log.Error(state.Error())
