@@ -1,9 +1,7 @@
-github.com/akrck02/valhalla-core-dal v0.0.10-20240702213817-feature-teams h1:QaGpwT9ETeKWSa3j1PdQwBY7oHLOVasa8xke+SIXWb4=
-github.com/akrck02/valhalla-core-dal v0.0.10-20240702213817-feature-teams/go.mod h1:YXRN9OGPhGMaNWzN9hth/gwmtWjdLYz5j9730RwcAzE=
-github.com/akrck02/valhalla-core-sdk v0.0.11-20240702212155-feature-teams h1:cH6GcTU30QbFNcM+AwNgoI6Kuy6v4yLPGpm383y/TzA=
-github.com/akrck02/valhalla-core-sdk v0.0.11-20240702212155-feature-teams/go.mod h1:qBovw83Vo/iXggXZS4ttcMqF9xFSR5ogu7G+RWh/jGg=
-github.com/akrck02/valhalla-core-sdk v0.0.11-20240702231743-feature-teams h1:AF9Umo0pLvxi528sCOLayNO0hN5sUTMg0ulz2q9C41g=
-github.com/akrck02/valhalla-core-sdk v0.0.11-20240702231743-feature-teams/go.mod h1:qBovw83Vo/iXggXZS4ttcMqF9xFSR5ogu7G+RWh/jGg=
+github.com/akrck02/valhalla-core-dal v0.0.10-20240703003222-feature-teams h1:c7jtUuOrfLEiD1nVSAeXwxcdjocczlc6L7eKqV1BYTc=
+github.com/akrck02/valhalla-core-dal v0.0.10-20240703003222-feature-teams/go.mod h1:OpvSSxXInnPtfH4YIIo/hkR9Faz7ONMcllUteZm959I=
+github.com/akrck02/valhalla-core-sdk v0.0.11-20240702235716-feature-teams h1:SgdAhxSoBQ+Kk4rgoBcG8WBVAVSdaqb4R2oMjnp2wo4=
+github.com/akrck02/valhalla-core-sdk v0.0.11-20240702235716-feature-teams/go.mod h1:qBovw83Vo/iXggXZS4ttcMqF9xFSR5ogu7G+RWh/jGg=
 github.com/bytedance/sonic v1.11.7 h1:k/l9p1hZpNIMJSk37wL9ltkcpqLfIho1vYthi4xT2t4=
 github.com/bytedance/sonic v1.11.7/go.mod h1:LysEHSvpvDySVdC2f87zGWf6CIKJcAvqab1ZaiQtds4=
 github.com/bytedance/sonic/loader v0.1.1 h1:c+e5Pt1k/cy5wMveRDyk2X4B9hF4g7an8N3zCYjJFNM=

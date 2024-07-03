@@ -7,7 +7,6 @@ import (
 	"github.com/akrck02/valhalla-core-dal/database"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
-	sdkmodels "github.com/akrck02/valhalla-core-sdk/models"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
@@ -28,18 +27,19 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 
 		// get the context
 		var request, _ = ginContext.Get("request")
-		user := request.(sdkmodels.Request).User
+		user := request.(systemmodels.Request).User
 
 		valhallaContext := systemmodels.ValhallaContext{
+			Database: systemmodels.Database{},
 			Launcher: systemmodels.Launcher{
 				Id:           user.ID,
 				LauncherType: systemmodels.USER,
 			},
-			Database: systemmodels.Database{},
 			Trazability: systemmodels.Trazability{
 				Method:    endpoint.Path,
 				Timestamp: time.Now().String(),
 			},
+			Request: request.(systemmodels.Request),
 		}
 
 		// check parameters and return error if necessary
@@ -50,14 +50,16 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 		}
 
 		// connect to the database if necessary
-		client := database.Connect()
-		defer client.Disconnect(database.GetDefaultContext())
+		if endpoint.Database {
+			client := database.Connect()
+			defer client.Disconnect(database.GetDefaultContext())
 
-		valhallaContext.Database.Client = client
-		valhallaContext.Database.Name = database.CurrentDatabase
+			valhallaContext.Database.Client = client
+			valhallaContext.Database.Name = database.CurrentDatabase
+		}
 
 		// execute the function
-		result, error := endpoint.Listener(valhallaContext, ginContext)
+		result, error := endpoint.Listener(valhallaContext)
 
 		// calculate the time of the response
 		end := time.Now()

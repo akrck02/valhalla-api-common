@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/akrck02/valhalla-core-sdk/models"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
@@ -10,14 +9,15 @@ type Endpoint struct {
 	Path     string           `json:"path"`
 	Method   int              `json:"method"`
 	Listener EndpointListener `json:"listener"`
-	Checks   EndpointListener `json:"parameterCheck"`
+	Checks   EndpointCheck    `json:"checks"`
 	Secured  bool             `json:"secured"`
 	Database bool             `json:"database"`
 }
 
-type EndpointListener func(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error)
+type EndpointCheck func(context systemmodels.ValhallaContext, gin *gin.Context) (*systemmodels.Response, *systemmodels.Error)
+type EndpointListener func(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error)
 
-func EndpointFrom(path string, method int, listener EndpointListener, checks EndpointListener, secured bool, database bool) Endpoint {
+func EndpointFrom(path string, method int, listener EndpointListener, checks EndpointCheck, secured bool, database bool) Endpoint {
 	return Endpoint{
 		Path:     path,
 		Method:   method,

@@ -5,8 +5,8 @@ go 1.22
 toolchain go1.22.3
 
 require (
-	github.com/akrck02/valhalla-core-dal v0.0.10-20240702213817-feature-teams
-	github.com/akrck02/valhalla-core-sdk v0.0.11-20240702231743-feature-teams
+	github.com/akrck02/valhalla-core-dal v0.0.10-20240703003222-feature-teams
+	github.com/akrck02/valhalla-core-sdk v0.0.11-20240702235716-feature-teams
 	github.com/gin-gonic/gin v1.10.0
 	github.com/itsjamie/gin-cors v0.0.0-20220228161158-ef28d3d2a0a8
 	github.com/joho/godotenv v1.5.1

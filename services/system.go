@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/akrck02/valhalla-core-sdk/http"
-	"github.com/akrck02/valhalla-core-sdk/models"
 	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
@@ -20,12 +19,12 @@ type ValhallaCoreInfo struct {
 	GoVersion  string   `json:"go-version"`
 }
 
-func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
+func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	// get go version
 	goVersion := runtime.Version()
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code: http.HTTP_STATUS_OK,
 		Response: ValhallaCoreInfo{
 			Version: os.Getenv("VERSION"),
@@ -43,6 +42,6 @@ func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext, gin *gin.Context
 	}, nil
 }
 
-func ValhallaCoreInfoHttpCheck(context systemmodels.ValhallaContext, gin *gin.Context) (*models.Response, *models.Error) {
+func EmptyCheck(context systemmodels.ValhallaContext, gin *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
 	return nil, nil
 }

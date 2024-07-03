@@ -6,7 +6,7 @@ import (
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
-	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/akrck02/valhalla-core-sdk/valerror"
 
 	"github.com/gin-gonic/gin"
@@ -68,9 +68,9 @@ func Security(endpoints []apiModels.Endpoint) gin.HandlerFunc {
 		// Get request
 
 		var request, _ = c.Get("request")
-		request = request.(models.Request)
+		request = request.(systemmodels.Request)
 
-		var castedRequest = request.(models.Request)
+		var castedRequest = request.(systemmodels.Request)
 		castedRequest.User = user
 
 		// Set user in request
