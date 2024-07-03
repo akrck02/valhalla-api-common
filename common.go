@@ -54,7 +54,7 @@ func Start(configuration configuration.APIConfiguration, endpoints []models.Endp
 		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/",
 		Method:   http.HTTP_METHOD_GET,
 		Listener: services.ValhallaCoreInfoHttp,
-		Checks:   services.ValhallaCoreInfoHttpCheck,
+		Checks:   services.EmptyCheck,
 		Secured:  false,
 		Database: false,
 	})
