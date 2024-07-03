@@ -19,7 +19,7 @@ type ValhallaCoreInfo struct {
 	GoVersion  string   `json:"go-version"`
 }
 
-func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
+func ValhallaCoreInfoHttp(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	// get go version
 	goVersion := runtime.Version()
@@ -42,6 +42,6 @@ func ValhallaCoreInfoHttp(context systemmodels.ValhallaContext) (*systemmodels.R
 	}, nil
 }
 
-func EmptyCheck(context systemmodels.ValhallaContext, gin *gin.Context) (*systemmodels.Response, *systemmodels.Error) {
-	return nil, nil
+func EmptyCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
+	return nil
 }

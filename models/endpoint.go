@@ -14,8 +14,8 @@ type Endpoint struct {
 	Database bool             `json:"database"`
 }
 
-type EndpointCheck func(context systemmodels.ValhallaContext, gin *gin.Context) (*systemmodels.Response, *systemmodels.Error)
-type EndpointListener func(context systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error)
+type EndpointCheck func(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error
+type EndpointListener func(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error)
 
 func EndpointFrom(path string, method int, listener EndpointListener, checks EndpointCheck, secured bool, database bool) Endpoint {
 	return Endpoint{

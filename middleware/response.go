@@ -29,7 +29,7 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 		var request, _ = ginContext.Get("request")
 		user := request.(systemmodels.Request).User
 
-		valhallaContext := systemmodels.ValhallaContext{
+		valhallaContext := &systemmodels.ValhallaContext{
 			Database: systemmodels.Database{},
 			Launcher: systemmodels.Launcher{
 				Id:           user.ID,
@@ -43,7 +43,7 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 		}
 
 		// check parameters and return error if necessary
-		_, error := endpoint.Checks(valhallaContext, ginContext)
+		error := endpoint.Checks(valhallaContext, ginContext)
 		if error != nil {
 			ginContext.JSON(error.Status, error)
 			return
