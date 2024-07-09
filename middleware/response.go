@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/akrck02/valhalla-api-common/models"
-	"github.com/akrck02/valhalla-api-common/server"
 	"github.com/akrck02/valhalla-core-dal/database"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
@@ -27,20 +26,24 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 		start := time.Now()
 
 		// get the context
-		request := server.GetRequestMetadata(ginContext)
-		user := request.User
+		var request, _ = ginContext.Get("request")
+		user := request.(systemmodels.Request).User
 
-		valhallaContext := &systemmodels.ValhallaContext{
-			Database: systemmodels.Database{},
-			Launcher: systemmodels.Launcher{
+		valhallaContext := &systemmodels.ValhallaContext{}
+		valhallaContext.Database = systemmodels.Database{}
+		valhallaContext.Request = request.(systemmodels.Request)
+		valhallaContext.Launcher = systemmodels.Launcher{}
+
+		if user != nil {
+			valhallaContext.Launcher = systemmodels.Launcher{
 				Id:           user.ID,
 				LauncherType: systemmodels.USER,
-			},
-			Trazability: systemmodels.Trazability{
-				Method:    endpoint.Path,
-				Timestamp: time.Now().String(),
-			},
-			Request: request,
+			}
+		}
+
+		valhallaContext.Trazability = systemmodels.Trazability{
+			Method:    endpoint.Path,
+			Timestamp: time.Now().String(),
 		}
 
 		// check parameters and return error if necessary
