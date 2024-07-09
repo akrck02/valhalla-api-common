@@ -11,12 +11,12 @@ import (
 )
 
 type ValhallaCoreInfo struct {
-	Version    string   `json:"version"`
-	License    string   `json:"license"`
-	Authors    []string `json:"authors"`
-	Copyleft   string   `json:"copyleft"`
-	Repository string   `json:"repository"`
-	GoVersion  string   `json:"go-version"`
+	Version     string   `json:"version"`
+	License     string   `json:"license"`
+	Maintainers []string `json:"maintainers"`
+	Copyleft    string   `json:"copyleft"`
+	Repository  string   `json:"repository"`
+	GoVersion   string   `json:"go-version"`
 }
 
 func ValhallaCoreInfoHttp(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
@@ -29,10 +29,8 @@ func ValhallaCoreInfoHttp(context *systemmodels.ValhallaContext) (*systemmodels.
 		Response: ValhallaCoreInfo{
 			Version: os.Getenv("VERSION"),
 			License: "GNU GPLv3",
-			Authors: []string{
+			Maintainers: []string{
 				"akrck02",
-				"AlejandroMacazaga",
-				"AnderRod01",
 				"Itros97",
 			},
 			Copyleft:   time.Now().Format("2006"),
