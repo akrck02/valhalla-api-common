@@ -66,7 +66,6 @@ func Security(endpoints []apiModels.Endpoint) gin.HandlerFunc {
 		}
 
 		// Get request
-
 		var request, _ = c.Get("request")
 		request = request.(systemmodels.Request)
 

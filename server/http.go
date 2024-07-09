@@ -1,4 +1,4 @@
-package http
+package server
 
 import (
 	"bytes"
@@ -69,13 +69,13 @@ func MultipartToBytes(c *gin.Context, key string) ([]byte, error) {
 // [param] c | *gin.Context: gin context
 //
 // [return] *models.Request: request metadata
-func GetRequestMetadata(c *gin.Context) *systemmodels.Request {
+func GetRequestMetadata(c *gin.Context) systemmodels.Request {
 	var request, exists = c.Get("request")
 
 	if !exists {
-		return nil
+		return systemmodels.Request{}
 	}
 
 	var casted systemmodels.Request = request.(systemmodels.Request)
-	return &casted
+	return casted
 }

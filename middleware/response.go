@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/akrck02/valhalla-api-common/models"
+	"github.com/akrck02/valhalla-api-common/server"
 	"github.com/akrck02/valhalla-core-dal/database"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
@@ -26,8 +27,8 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 		start := time.Now()
 
 		// get the context
-		var request, _ = ginContext.Get("request")
-		user := request.(systemmodels.Request).User
+		request := server.GetRequestMetadata(ginContext)
+		user := request.User
 
 		valhallaContext := &systemmodels.ValhallaContext{
 			Database: systemmodels.Database{},
@@ -39,7 +40,7 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 				Method:    endpoint.Path,
 				Timestamp: time.Now().String(),
 			},
-			Request: request.(systemmodels.Request),
+			Request: request,
 		}
 
 		// check parameters and return error if necessary
