@@ -1,41 +1,45 @@
 package services
 
 import (
+	"os"
 	"runtime"
 	"time"
 
 	"github.com/akrck02/valhalla-core-sdk/http"
-	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
 
 type ValhallaCoreInfo struct {
-	Version    string   `json:"version"`
-	License    string   `json:"license"`
-	Authors    []string `json:"authors"`
-	Copyleft   string   `json:"copyleft"`
-	Repository string   `json:"repository"`
-	GoVersion  string   `json:"go-version"`
+	Version     string   `json:"version"`
+	License     string   `json:"license"`
+	Maintainers []string `json:"maintainers"`
+	Copyleft    string   `json:"copyleft"`
+	Repository  string   `json:"repository"`
+	GoVersion   string   `json:"go-version"`
 }
 
-func ValhallaCoreInfoHttp(c *gin.Context) (*models.Response, *models.Error) {
+func ValhallaCoreInfoHttp(context *systemmodels.ValhallaContext) (*systemmodels.Response, *systemmodels.Error) {
 
 	// get go version
 	goVersion := runtime.Version()
 
-	return &models.Response{
+	return &systemmodels.Response{
 		Code: http.HTTP_STATUS_OK,
 		Response: ValhallaCoreInfo{
-			Version: "1.0.0",
+			Version: os.Getenv("VERSION"),
 			License: "GNU GPLv3",
-			Authors: []string{
+			Maintainers: []string{
 				"akrck02",
-				"AlejandroMacazaga",
-				"AnderRod01",
+				"Itros97",
 			},
 			Copyleft:   time.Now().Format("2006"),
-			Repository: "https://github.com/akrck02/valhalla-core",
+			Repository: os.Getenv("REPOSITORY"),
 			GoVersion:  goVersion,
 		},
 	}, nil
+}
+
+func EmptyCheck(context *systemmodels.ValhallaContext, gin *gin.Context) *systemmodels.Error {
+	return nil
 }

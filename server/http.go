@@ -1,11 +1,11 @@
-package http
+package server
 
 import (
 	"bytes"
 	"io"
 	"mime/multipart"
 
-	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
 
@@ -69,13 +69,13 @@ func MultipartToBytes(c *gin.Context, key string) ([]byte, error) {
 // [param] c | *gin.Context: gin context
 //
 // [return] *models.Request: request metadata
-func GetRequestMetadata(c *gin.Context) *models.Request {
+func GetRequestMetadata(c *gin.Context) systemmodels.Request {
 	var request, exists = c.Get("request")
 
 	if !exists {
-		return nil
+		return systemmodels.Request{}
 	}
 
-	var casted models.Request = request.(models.Request)
-	return &casted
+	var casted systemmodels.Request = request.(systemmodels.Request)
+	return casted
 }

@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"github.com/akrck02/valhalla-core-sdk/error"
 	"github.com/akrck02/valhalla-core-sdk/http"
-	"github.com/akrck02/valhalla-core-sdk/models"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
+	"github.com/akrck02/valhalla-core-sdk/valerror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,9 +19,9 @@ func Panic() gin.HandlerFunc {
 
 			var err = c.Errors[0]
 
-			c.JSON(http.HTTP_STATUS_INTERNAL_SERVER_ERROR, &models.Error{
+			c.JSON(http.HTTP_STATUS_INTERNAL_SERVER_ERROR, &systemmodels.Error{
 				Status:  http.HTTP_STATUS_INTERNAL_SERVER_ERROR,
-				Error:   error.UNEXPECTED_ERROR,
+				Error:   valerror.UNEXPECTED_ERROR,
 				Message: err.Error(),
 			})
 		}

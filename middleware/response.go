@@ -4,8 +4,10 @@ import (
 	"time"
 
 	"github.com/akrck02/valhalla-api-common/models"
+	"github.com/akrck02/valhalla-core-dal/database"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
+	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,27 +20,71 @@ type EmptyResponse struct {
 // [return] func(c *gin.Context): handler
 func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 
-	return func(c *gin.Context) {
+	return func(ginContext *gin.Context) {
 
-		//calculate the time of the request
+		// calculate the time of the request
 		start := time.Now()
-		result, error := endpoint.Listener(c)
+
+		// get the context
+		var request, _ = ginContext.Get("request")
+		user := request.(systemmodels.Request).User
+
+		valhallaContext := &systemmodels.ValhallaContext{}
+		valhallaContext.Database = systemmodels.Database{}
+		valhallaContext.Request = request.(systemmodels.Request)
+		valhallaContext.Launcher = systemmodels.Launcher{}
+
+		if user != nil {
+			valhallaContext.Launcher = systemmodels.Launcher{
+				Id:           user.ID,
+				LauncherType: systemmodels.USER,
+			}
+		}
+
+		valhallaContext.Trazability = systemmodels.Trazability{
+			Method:    endpoint.Path,
+			Timestamp: time.Now().String(),
+		}
+
+		// check parameters and return error if necessary
+		error := endpoint.Checks(valhallaContext, ginContext)
+		if error != nil {
+			ginContext.JSON(error.Status, error)
+			return
+		}
+
+		// connect to the database if necessary
+		if endpoint.Database {
+			client := database.Connect()
+			defer client.Disconnect(database.GetDefaultContext())
+
+			valhallaContext.Database.Client = client
+			valhallaContext.Database.Name = database.CurrentDatabase
+		}
+
+		// execute the function
+		result, error := endpoint.Listener(valhallaContext)
+
+		// calculate the time of the response
 		end := time.Now()
 		elapsed := end.Sub(start)
 
+		// if something went wrong, return error
 		if error != nil {
-			c.JSON(error.Status, error)
+			ginContext.JSON(error.Status, error)
 			return
 		}
 
+		// if response is nil, return {}
 		if result == nil {
 			log.Logger.Warn("Response is nil")
-			c.JSON(http.HTTP_STATUS_OK, EmptyResponse{})
+			ginContext.JSON(http.HTTP_STATUS_OK, EmptyResponse{})
 			return
 		}
 
+		// send response
 		result.ResponseTime = elapsed.Nanoseconds()
-		c.JSON(result.Code, result)
+		ginContext.JSON(result.Code, result)
 	}
 
 }
