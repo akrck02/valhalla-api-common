@@ -46,13 +46,6 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 			Timestamp: time.Now().String(),
 		}
 
-		// check parameters and return error if necessary
-		error := endpoint.Checks(valhallaContext, ginContext)
-		if error != nil {
-			ginContext.JSON(error.Status, error)
-			return
-		}
-
 		// connect to the database if necessary
 		if endpoint.Database {
 
@@ -61,6 +54,13 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 
 			valhallaContext.Database.Client = client
 			valhallaContext.Database.Name = database.CurrentDatabase
+		}
+
+		// check parameters and return error if necessary
+		error := endpoint.Checks(valhallaContext, ginContext)
+		if error != nil {
+			ginContext.JSON(error.Status, error)
+			return
 		}
 
 		// execute the function
