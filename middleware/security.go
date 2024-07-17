@@ -3,6 +3,7 @@ package middleware
 import (
 	apiModels "github.com/akrck02/valhalla-api-common/models"
 
+	"github.com/akrck02/valhalla-core-dal/database"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
@@ -53,8 +54,15 @@ func Security(endpoints []apiModels.Endpoint) gin.HandlerFunc {
 			return
 		}
 
+		// Connect to the database if necessary
+		// FIXME: This connects to the database ONLY for the token validation
+		// This is not the best approach, but it is the fastest one for now
+		// We should change this in the future passing the database connection
+		client := database.Connect()
+		defer client.Disconnect(database.GetDefaultContext())
+
 		// Check if token is valid
-		user, err := userdal.IsTokenValid(token)
+		user, err := userdal.IsTokenValid(client, token)
 
 		if err != nil {
 			c.AbortWithStatusJSON(
