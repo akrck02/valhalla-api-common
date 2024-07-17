@@ -55,6 +55,7 @@ func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
 
 		// connect to the database if necessary
 		if endpoint.Database {
+
 			client := database.Connect()
 			defer client.Disconnect(database.GetDefaultContext())
 
