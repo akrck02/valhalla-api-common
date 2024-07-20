@@ -1,20 +1,39 @@
 package middleware
 
 import (
-	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
-	"github.com/gin-gonic/gin"
+	"net/http"
+
+	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
+	"github.com/akrck02/valhalla-core-sdk/valerror"
 )
 
-func Request() gin.HandlerFunc {
-	return func(c *gin.Context) {
+const USER_AGENT_HEADER = "User-Agent"
 
-		var request = systemmodels.Request{
-			Authorization: c.Request.Header.Get(AUTHORITATION_HEADER),
-			IP:            c.ClientIP(),
-			UserAgent:     c.Request.UserAgent(),
+func Request(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
+
+	parserError := r.ParseForm()
+
+	if parserError != nil {
+		return &apimodels.Error{
+			Status:  http.StatusBadRequest,
+			Error:   valerror.INVALID_REQUEST,
+			Message: parserError.Error(),
 		}
-
-		c.Set("request", request)
-		c.Next()
 	}
+
+	context.Request = apimodels.Request{
+		Authorization: r.Header.Get(AUTHORITATION_HEADER),
+		IP:            r.Host,
+		UserAgent:     r.Header.Get(USER_AGENT_HEADER),
+		Headers:       r.Header,
+		Body:          r.Body,
+		Params:        r.Form,
+	}
+
+	// If files are present, add them to the context
+	if r.MultipartForm != nil {
+		context.Request.Files = r.MultipartForm.File
+	}
+
+	return nil
 }

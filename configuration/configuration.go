@@ -18,7 +18,7 @@ func LoadConfiguration(path string) APIConfiguration {
 
 	err := godotenv.Load(path)
 
-	if err != nil {
+	if nil != err {
 		log.Fatal("Error loading .env file")
 	}
 
