@@ -39,6 +39,14 @@ func ValhallaCoreInfoHttp(context *apimodels.ApiContext) (*apimodels.Response, *
 	}, nil
 }
 
+func Health(context *apimodels.ApiContext) (*apimodels.Response, *apimodels.Error) {
+
+	return &apimodels.Response{
+		Code:     http.HTTP_STATUS_OK,
+		Response: "OK",
+	}, nil
+}
+
 func EmptyCheck(context *apimodels.ApiContext) *apimodels.Error {
 	return nil
 }

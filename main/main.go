@@ -3,7 +3,9 @@ package main
 import (
 	apicommon "github.com/akrck02/valhalla-api-common"
 	"github.com/akrck02/valhalla-api-common/configuration"
+	"github.com/akrck02/valhalla-api-common/services"
 	databaseConfig "github.com/akrck02/valhalla-core-dal/configuration"
+	sdkhttp "github.com/akrck02/valhalla-core-sdk/http"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
@@ -16,6 +18,15 @@ func main() {
 
 	apicommon.Start(
 		config,
-		[]apimodels.Endpoint{},
+		[]apimodels.Endpoint{
+			{
+				Path:     "health",
+				Method:   sdkhttp.HTTP_METHOD_POST,
+				Listener: services.Health,
+				Checks:   services.EmptyCheck,
+				Secured:  false,
+				Database: true,
+			},
+		},
 	)
 }

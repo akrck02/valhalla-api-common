@@ -1,24 +1,29 @@
 package middleware
 
 import (
-	"net/http"
-	"time"
-
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
+	"github.com/akrck02/valhalla-core-sdk/utils"
 )
 
-func Trazability(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
+func Trazability(context *apimodels.ApiContext) *apimodels.Error {
 
-	if context.Request.user != nil {
-		context.Launcher = apimodels.Launcher{
-			Id:           "", //user.ID,
-			LauncherType: apimodels.USER,
-		}
-	}
+	time := utils.GetCurrentMillis()
 
 	context.Trazability = apimodels.Trazability{
-		Endpoint:  nil,
-		Timestamp: time.Now().String(),
+		Endpoint:  context.Trazability.Endpoint,
+		Timestamp: &time,
+		User:      context.Trazability.User,
+	}
+
+	if context.Trazability.User != nil {
+
+		// we're assuming that the user is the launcher for now
+		// this MUST be changed in the future
+		context.Trazability.Launcher = apimodels.Launcher{
+			Id:           context.Trazability.User.ID,
+			LauncherType: apimodels.USER,
+		}
+
 	}
 
 	return nil

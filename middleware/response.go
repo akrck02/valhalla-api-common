@@ -1,18 +1,16 @@
 package middleware
 
 import (
-	"encoding/json"
+	"net/http"
 	"time"
 
-	"github.com/akrck02/valhalla-core-sdk/http"
-	"github.com/akrck02/valhalla-core-sdk/log"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
 type EmptyResponse struct {
 }
 
-func Response(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
+func Response(context *apimodels.ApiContext) *apimodels.Error {
 
 	// calculate the time of the request
 	start := time.Now()
@@ -31,20 +29,17 @@ func Response(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
 
 	// if response is nil, return {}
 	if nil == result {
-		log.Logger.Warn("Response is nil")
+		context.Response = apimodels.Response{
+			Code:     http.StatusNoContent,
+			Response: EmptyResponse{},
+		}
 
-		//FIXME set http status code
-		json.NewEncoder(w).Encode(EmptyResponse{})
-
-		return
+		return nil
 	}
 
 	// send response
 	result.ResponseTime = elapsed.Nanoseconds()
-
-	json.NewEncoder(w).Encode(result)
-
-	//FIXME set http status code
-	ginContext.JSON(result.Code, result)
+	context.Response = *result
+	return nil
 
 }
