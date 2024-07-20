@@ -1,100 +1,136 @@
 package apicommon
 
 import (
-	"time"
+	"encoding/json"
+	"net/http"
 
 	"github.com/akrck02/valhalla-api-common/configuration"
 	"github.com/akrck02/valhalla-api-common/middleware"
-	"github.com/akrck02/valhalla-api-common/models"
+	"github.com/akrck02/valhalla-core-dal/database"
+
 	"github.com/akrck02/valhalla-api-common/services"
-	"github.com/akrck02/valhalla-core-sdk/http"
+	sdkhhttp "github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
-	"github.com/gin-gonic/gin"
-	cors "github.com/itsjamie/gin-cors"
+	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
 const API_PATH = "/api/"
 
-// Start API
-func Start(configuration configuration.APIConfiguration, endpoints []models.Endpoint) {
+func Start(configuration configuration.APIConfiguration, endpoints []apimodels.Endpoint) {
 
 	// set debug or release mode
 	if configuration.IsDevelopment() {
-		gin.SetMode(gin.DebugMode)
 		log.Logger.WithDebug()
-	} else {
-		gin.SetMode(gin.ReleaseMode)
 	}
 
 	// show log app title and start router
 	log.ShowLogAppTitle("Valhalla " + configuration.ApiName + " API")
-	router := gin.Default()
-	router.NoRoute(middleware.NotFound())
 
-	// CORS configuration
-	router.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE, OPTIONS",
-		RequestHeaders:  "User-Agent, Accept, Accept-Language, Authorization, Accept-Encoding, Referer, Content-type, mode, Origin, Connection, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Pragma, Cache-Control",
-		ExposedHeaders:  "",
-		MaxAge:          300 * time.Second,
-		Credentials:     false,
-		ValidateHeaders: false,
-	}))
+	// // CORS configuration
+	http.HandleFunc("OPTIONS", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Max-Age", "3600")
+		w.WriteHeader(http.StatusNoContent)
+	})
 
 	// Add API path to endpoints
-	newEndpoints := []models.Endpoint{}
+	newEndpoints := []apimodels.Endpoint{}
 	for _, endpoint := range endpoints {
 		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + "/" + endpoint.Path
 		newEndpoints = append(newEndpoints, endpoint)
 	}
 
 	// Add core info endpoint
-	newEndpoints = append(newEndpoints, models.Endpoint{
+	newEndpoints = append(newEndpoints, apimodels.Endpoint{
 		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/",
-		Method:   http.HTTP_METHOD_GET,
+		Method:   sdkhhttp.HTTP_METHOD_GET,
 		Listener: services.ValhallaCoreInfoHttp,
 		Checks:   services.EmptyCheck,
 		Secured:  false,
 		Database: false,
 	})
 
-	// Register middleware
-	router.Use(middleware.Request())
-	router.Use(middleware.Security(newEndpoints))
-	router.Use(middleware.Panic())
-
 	// Register endpoints
-	registerEndpoints(router, newEndpoints)
+	registerEndpoints(newEndpoints)
 
-	// Start API
+	// Start listening HTTP requests
 	log.FormattedInfo("API started on http://${0}:${1}${2}", configuration.Ip, configuration.Port, API_PATH)
-	state := router.Run(configuration.Ip + ":" + configuration.Port)
+	state := http.ListenAndServe(configuration.Ip+":"+configuration.Port, nil)
 	log.Error(state.Error())
 
 }
 
-// Register endpoints
-//
-// [param] router | *gin.Engine: router
-// [param] endpoints | []models.Endpoint: endpoints
-func registerEndpoints(router *gin.Engine, endpoints []models.Endpoint) {
+func registerEndpoints(endpoints []apimodels.Endpoint) {
 
 	for _, endpoint := range endpoints {
 
 		log.FormattedInfo("Endpoint ${0} registered.", endpoint.Path)
 
 		switch endpoint.Method {
-		case http.HTTP_METHOD_GET:
-			router.GET(endpoint.Path, middleware.APIResponseManagement(endpoint))
-		case http.HTTP_METHOD_POST:
-			router.POST(endpoint.Path, middleware.APIResponseManagement(endpoint))
-		case http.HTTP_METHOD_PUT:
-			router.PUT(endpoint.Path, middleware.APIResponseManagement(endpoint))
-		case http.HTTP_METHOD_DELETE:
-			router.DELETE(endpoint.Path, middleware.APIResponseManagement(endpoint))
-		case http.HTTP_METHOD_PATCH:
-			router.PATCH(endpoint.Path, middleware.APIResponseManagement(endpoint))
+		case sdkhhttp.HTTP_METHOD_GET:
+			endpoint.Path = "GET " + endpoint.Path
+		case sdkhhttp.HTTP_METHOD_POST:
+			endpoint.Path = "POST " + endpoint.Path
+		case sdkhhttp.HTTP_METHOD_PUT:
+			endpoint.Path = "PUT " + endpoint.Path
+		case sdkhhttp.HTTP_METHOD_DELETE:
+			endpoint.Path = "DELETE " + endpoint.Path
+		case sdkhhttp.HTTP_METHOD_PATCH:
+			endpoint.Path = "PATCH " + endpoint.Path
 		}
+
+		http.HandleFunc(endpoint.Path, func(w http.ResponseWriter, r *http.Request) {
+
+			// create basic api context
+			context := &apimodels.ApiContext{}
+
+			// Register middleware
+			err := middleware.Request(r, context)
+
+			if nil != err {
+				w.WriteHeader(err.Status)
+				json.NewEncoder(w).Encode(err)
+				return
+			}
+
+			err = middleware.Security(r, context)
+
+			if nil != err {
+				w.WriteHeader(err.Status)
+				json.NewEncoder(w).Encode(err)
+				return
+			}
+
+			err = middleware.Database(r, context)
+
+			if nil != err {
+				w.WriteHeader(err.Status)
+				json.NewEncoder(w).Encode(err)
+				return
+			}
+
+			err = middleware.Trazability(r, context)
+
+			if nil != err {
+				w.WriteHeader(err.Status)
+				json.NewEncoder(w).Encode(err)
+				return
+			}
+
+			err = middleware.Response(r, context)
+
+			if nil != err {
+				w.WriteHeader(err.Status)
+				json.NewEncoder(w).Encode(err)
+				return
+			}
+
+			if nil != context.Database.Client {
+				defer context.Database.Client.Disconnect(database.GetDefaultContext())
+			}
+		})
+
 	}
 }

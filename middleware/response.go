@@ -1,91 +1,50 @@
 package middleware
 
 import (
+	"encoding/json"
 	"time"
 
-	"github.com/akrck02/valhalla-api-common/models"
-	"github.com/akrck02/valhalla-core-dal/database"
 	"github.com/akrck02/valhalla-core-sdk/http"
 	"github.com/akrck02/valhalla-core-sdk/log"
-	systemmodels "github.com/akrck02/valhalla-core-sdk/models/system"
-	"github.com/gin-gonic/gin"
+	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
 type EmptyResponse struct {
 }
 
-// Manage errors in a generic way passing the function that will be executed
-//
-// [param] endpoint | Endpoint: endpoint
-// [return] func(c *gin.Context): handler
-func APIResponseManagement(endpoint models.Endpoint) func(c *gin.Context) {
+func Response(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
 
-	return func(ginContext *gin.Context) {
+	// calculate the time of the request
+	start := time.Now()
 
-		// calculate the time of the request
-		start := time.Now()
+	// execute the function
+	result, responseError := context.Trazability.Endpoint.Listener(context)
 
-		// get the context
-		var request, _ = ginContext.Get("request")
-		user := request.(systemmodels.Request).User
+	// calculate the time of the response
+	end := time.Now()
+	elapsed := end.Sub(start)
 
-		valhallaContext := &systemmodels.ValhallaContext{}
-		valhallaContext.Database = systemmodels.Database{}
-		valhallaContext.Request = request.(systemmodels.Request)
-		valhallaContext.Launcher = systemmodels.Launcher{}
-
-		if user != nil {
-			valhallaContext.Launcher = systemmodels.Launcher{
-				Id:           user.ID,
-				LauncherType: systemmodels.USER,
-			}
-		}
-
-		valhallaContext.Trazability = systemmodels.Trazability{
-			Method:    endpoint.Path,
-			Timestamp: time.Now().String(),
-		}
-
-		// connect to the database if necessary
-		if endpoint.Database {
-
-			client := database.Connect()
-			defer client.Disconnect(database.GetDefaultContext())
-
-			valhallaContext.Database.Client = client
-			valhallaContext.Database.Name = database.CurrentDatabase
-		}
-
-		// check parameters and return error if necessary
-		error := endpoint.Checks(valhallaContext, ginContext)
-		if error != nil {
-			ginContext.JSON(error.Status, error)
-			return
-		}
-
-		// execute the function
-		result, error := endpoint.Listener(valhallaContext)
-
-		// calculate the time of the response
-		end := time.Now()
-		elapsed := end.Sub(start)
-
-		// if something went wrong, return error
-		if error != nil {
-			ginContext.JSON(error.Status, error)
-			return
-		}
-
-		// if response is nil, return {}
-		if result == nil {
-			log.Logger.Warn("Response is nil")
-			ginContext.JSON(http.HTTP_STATUS_OK, EmptyResponse{})
-			return
-		}
-
-		// send response
-		result.ResponseTime = elapsed.Nanoseconds()
-		ginContext.JSON(result.Code, result)
+	// if something went wrong, return error
+	if nil != responseError {
+		return responseError
 	}
+
+	// if response is nil, return {}
+	if nil == result {
+		log.Logger.Warn("Response is nil")
+
+		//FIXME set http status code
+		json.NewEncoder(w).Encode(EmptyResponse{})
+
+		return
+	}
+
+	// send response
+	result.ResponseTime = elapsed.Nanoseconds()
+
+	json.NewEncoder(w).Encode(result)
+
+	//FIXME set http status code
+	ginContext.JSON(result.Code, result)
 
 }
