@@ -37,15 +37,6 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 	// show log app title and start router
 	log.ShowLogAppTitle("Valhalla " + configuration.ApiName + " API")
 
-	// CORS configuration
-	// http.HandleFunc("OPTIONS", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH")
-	// 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	// 	w.Header().Set("Access-Control-Max-Age", "3600")
-	// 	w.WriteHeader(http.StatusNoContent)
-	// })
-
 	// register middlewares
 	ApiMiddlewares = append(ApiMiddlewares, middleware.Database)
 
@@ -58,11 +49,11 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 
 	// Add core info endpoint
 	newEndpoints = append(newEndpoints, apimodels.Endpoint{
-		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version,
+		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/info",
 		Method:   sdkhttp.HTTP_METHOD_GET,
 		Listener: services.ValhallaCoreInfoHttp,
 		Checks:   services.EmptyCheck,
-		Secured:  true,
+		Secured:  false,
 		Database: false,
 	})
 
@@ -70,7 +61,8 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 	registerEndpoints(newEndpoints)
 
 	// Start listening HTTP requests
-	log.FormattedInfo("API started on http://${0}:${1}${2}", configuration.Ip, configuration.Port, API_PATH)
+	log.FormattedInfo("API started on http://${0}:${1}${2}${3}/", configuration.Ip, configuration.Port, API_PATH, configuration.ApiName)
+	log.Info("")
 	state := http.ListenAndServe(configuration.Ip+":"+configuration.Port, nil)
 	log.Error(state.Error())
 
@@ -79,8 +71,6 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 func registerEndpoints(endpoints []apimodels.Endpoint) {
 
 	for _, endpoint := range endpoints {
-
-		log.FormattedInfo("Endpoint ${0} registered.", endpoint.Path)
 
 		switch endpoint.Method {
 		case sdkhttp.HTTP_METHOD_GET:
@@ -95,9 +85,12 @@ func registerEndpoints(endpoints []apimodels.Endpoint) {
 			endpoint.Path = "PATCH " + endpoint.Path
 		}
 
+		log.FormattedInfo("Endpoint ${0} registered.", endpoint.Path)
+
 		http.HandleFunc(endpoint.Path, func(w http.ResponseWriter, r *http.Request) {
 
 			// log the request
+			log.Info("")
 			log.FormattedInfo("${0}", endpoint.Path)
 
 			// enable CORS
