@@ -8,10 +8,11 @@ import (
 )
 
 type APIConfiguration struct {
-	Ip      string
-	Port    string
-	Version string
-	ApiName string
+	Ip         string
+	Port       string
+	Version    string
+	ApiName    string
+	Repository string
 }
 
 func LoadConfiguration(path string) APIConfiguration {
@@ -23,10 +24,11 @@ func LoadConfiguration(path string) APIConfiguration {
 	}
 
 	var configuration = APIConfiguration{
-		Ip:      os.Getenv("IP"),
-		Port:    os.Getenv("PORT"),
-		Version: os.Getenv("VERSION"),
-		ApiName: os.Getenv("API_NAME"),
+		Ip:         os.Getenv("IP"),
+		Port:       os.Getenv("PORT"),
+		Version:    os.Getenv("VERSION"),
+		ApiName:    os.Getenv("API_NAME"),
+		Repository: os.Getenv("REPOSITORY"),
 	}
 
 	checkCompulsoryVariables(configuration)
@@ -42,6 +44,7 @@ func checkCompulsoryVariables(Configuration APIConfiguration) {
 	log.Info("PORT: " + Configuration.Port)
 	log.Info("VERSION: " + Configuration.Version)
 	log.Info("API_NAME: " + Configuration.ApiName)
+	log.Info("REPOSITORY: " + Configuration.Repository)
 }
 
 func (APIConfiguration) IsDevelopment() bool {
