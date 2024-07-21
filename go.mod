@@ -5,8 +5,8 @@ go 1.22
 toolchain go1.22.3
 
 require (
-	github.com/akrck02/valhalla-core-dal v0.0.14-20240720154132-feature-native-http
-	github.com/akrck02/valhalla-core-sdk v0.0.12-20240720185150-feature-native-http
+	github.com/akrck02/valhalla-core-dal v0.0.14
+	github.com/akrck02/valhalla-core-sdk v0.0.13
 	github.com/joho/godotenv v1.5.1
 )
 

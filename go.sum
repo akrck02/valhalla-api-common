@@ -1,7 +1,7 @@
-github.com/akrck02/valhalla-core-dal v0.0.14-20240720154132-feature-native-http h1:EWuiir6mtGkBXRiETg43vmOuoHPg/3cO2LH5ZG09hUo=
-github.com/akrck02/valhalla-core-dal v0.0.14-20240720154132-feature-native-http/go.mod h1:qWmVNOOlY9fJ0E/QZ043W+unrJXzV9JnTZ0HgbGpii4=
-github.com/akrck02/valhalla-core-sdk v0.0.12-20240720185150-feature-native-http h1:n0f2zBGPFOCFUyA0jpqVwtKmdrVeSy1Orsehm6H44jU=
-github.com/akrck02/valhalla-core-sdk v0.0.12-20240720185150-feature-native-http/go.mod h1:qBovw83Vo/iXggXZS4ttcMqF9xFSR5ogu7G+RWh/jGg=
+github.com/akrck02/valhalla-core-dal v0.0.14 h1:26pj/GPrpxU0T6GCUjgoteoCQ3nf0BTp75DMEbZUw3Y=
+github.com/akrck02/valhalla-core-dal v0.0.14/go.mod h1:0TI43yl7DCyKxWf4fBr39jJaAqj5X0DOQoPp9K+Gy9k=
+github.com/akrck02/valhalla-core-sdk v0.0.13 h1:d/jRKpEPqIxIGMTmmlMDm/rnRGSLhZnNPu2xyXsB2N8=
+github.com/akrck02/valhalla-core-sdk v0.0.13/go.mod h1:qBovw83Vo/iXggXZS4ttcMqF9xFSR5ogu7G+RWh/jGg=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/golang-jwt/jwt/v5 v5.2.1 h1:OuVbFODueb089Lh128TAcimifWaLhJwVflnrgM17wHk=
