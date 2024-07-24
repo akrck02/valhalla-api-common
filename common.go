@@ -2,6 +2,7 @@ package apicommon
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/akrck02/valhalla-api-common/configuration"
 	"github.com/akrck02/valhalla-api-common/middleware"
@@ -46,12 +47,14 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 
 	// Add core info endpoint
 	newEndpoints = append(newEndpoints, apimodels.Endpoint{
-		Path:     API_PATH + configuration.ApiName + "/" + configuration.Version + "/info",
-		Method:   apimodels.GetMethod,
-		Listener: services.ValhallaCoreInfoHttp,
-		Checks:   services.EmptyCheck,
-		Secured:  false,
-		Database: false,
+		Path:             API_PATH + configuration.ApiName + "/" + configuration.Version + "/info",
+		Method:           apimodels.GetMethod,
+		Listener:         services.ValhallaCoreInfoHttp,
+		Checks:           services.EmptyCheck,
+		Secured:          false,
+		Database:         false,
+		ResponseMimeType: apimodels.MimeApplicationJson,
+		RequestMimeType:  apimodels.MimeApplicationJson,
 	})
 
 	// Register endpoints
@@ -91,10 +94,10 @@ func registerEndpoints(endpoints []apimodels.Endpoint) {
 			log.FormattedInfo("${0}", endpoint.Path)
 
 			// enable CORS
-			writer.Header().Set("Access-Control-Allow-Origin", "*")
-			writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH")
-			writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-			writer.Header().Set("Access-Control-Max-Age", "3600")
+			writer.Header().Set("Access-Control-Allow-Origin", os.Getenv("CORS_ORIGIN"))
+			writer.Header().Set("Access-Control-Allow-Methods", os.Getenv("CORS_METHODS"))
+			writer.Header().Set("Access-Control-Allow-Headers", os.Getenv("CORS_HEADERS"))
+			writer.Header().Set("Access-Control-Max-Age", os.Getenv("CORS_MAX_AGE"))
 
 			// create basic api context
 			context := &apimodels.ApiContext{
@@ -123,7 +126,7 @@ func registerEndpoints(endpoints []apimodels.Endpoint) {
 			}
 
 			// Execute the endpoint and send the response
-			middleware.Response(context, &endpoint, writer)
+			middleware.Response(context, writer)
 		})
 
 	}

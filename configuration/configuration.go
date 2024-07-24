@@ -13,6 +13,11 @@ type APIConfiguration struct {
 	Version    string
 	ApiName    string
 	Repository string
+
+	CorsAccessControlAllowOrigin  string
+	CorsAccessControlAllowMethods string
+	CorsAccessControlAllowHeaders string
+	CorsAccessControlMaxAge       string
 }
 
 func LoadConfiguration(path string) APIConfiguration {
@@ -29,6 +34,11 @@ func LoadConfiguration(path string) APIConfiguration {
 		Version:    os.Getenv("VERSION"),
 		ApiName:    os.Getenv("API_NAME"),
 		Repository: os.Getenv("REPOSITORY"),
+
+		CorsAccessControlAllowOrigin:  os.Getenv("CORS_ORIGIN"),
+		CorsAccessControlAllowMethods: os.Getenv("CORS_METHODS"),
+		CorsAccessControlAllowHeaders: os.Getenv("CORS_HEADERS"),
+		CorsAccessControlMaxAge:       os.Getenv("CORS_MAX_AGE"),
 	}
 
 	checkCompulsoryVariables(configuration)
@@ -45,6 +55,12 @@ func checkCompulsoryVariables(Configuration APIConfiguration) {
 	log.Info("VERSION: " + Configuration.Version)
 	log.Info("API_NAME: " + Configuration.ApiName)
 	log.Info("REPOSITORY: " + Configuration.Repository)
+
+	log.Line()
+	log.Info("CORS_ORIGIN: " + Configuration.CorsAccessControlAllowOrigin)
+	log.Info("CORS_METHODS: " + Configuration.CorsAccessControlAllowMethods)
+	log.Info("CORS_HEADERS: " + Configuration.CorsAccessControlAllowHeaders)
+	log.Info("CORS_MAX_AGE: " + Configuration.CorsAccessControlMaxAge)
 }
 
 func (APIConfiguration) IsDevelopment() bool {

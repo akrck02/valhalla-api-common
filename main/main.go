@@ -24,9 +24,9 @@ func main() {
 				Listener:         services.Health,
 				Checks:           services.EmptyCheck,
 				Secured:          false,
-				Database:         true,
+				Database:         false,
 				RequestMimeType:  apimodels.MimeApplicationJson,
-				ResponseMimeType: apimodels.MimeApplicationJson,
+				ResponseMimeType: apimodels.MimeTextPlain,
 			},
 		},
 	)

@@ -36,6 +36,12 @@ func Security(context *apimodels.ApiContext) *apimodels.Error {
 	client := database.Connect()
 	context.Database.Client = client
 
+	// Ping the database to check if it's alive
+	err := PingDatabase(context)
+	if nil != err {
+		return err
+	}
+
 	// Check if token is valid
 	// for now we're just checking if the token is in database
 	// TODO: Enchance this to check if the token is expired
