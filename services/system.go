@@ -1,11 +1,11 @@
 package services
 
 import (
+	"net/http"
 	"os"
 	"runtime"
 	"time"
 
-	"github.com/akrck02/valhalla-core-sdk/http"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
@@ -24,7 +24,7 @@ func ValhallaCoreInfoHttp(context *apimodels.ApiContext) (*apimodels.Response, *
 	goVersion := runtime.Version()
 
 	return &apimodels.Response{
-		Code: http.HTTP_STATUS_OK,
+		Code: http.StatusOK,
 		Response: ValhallaCoreInfo{
 			Version: os.Getenv("VERSION"),
 			License: "GNU GPLv3",
@@ -42,7 +42,7 @@ func ValhallaCoreInfoHttp(context *apimodels.ApiContext) (*apimodels.Response, *
 func Health(context *apimodels.ApiContext) (*apimodels.Response, *apimodels.Error) {
 
 	return &apimodels.Response{
-		Code:     http.HTTP_STATUS_OK,
+		Code:     http.StatusOK,
 		Response: "OK",
 	}, nil
 }

@@ -5,9 +5,9 @@ import (
 
 	"github.com/akrck02/valhalla-core-dal/database"
 	userdal "github.com/akrck02/valhalla-core-dal/services/user"
+	apierror "github.com/akrck02/valhalla-core-sdk/error"
 	"github.com/akrck02/valhalla-core-sdk/log"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
-	"github.com/akrck02/valhalla-core-sdk/valerror"
 )
 
 const AUTHORITATION_HEADER = "Authorization"
@@ -26,7 +26,7 @@ func Security(context *apimodels.ApiContext) *apimodels.Error {
 	if context.Request.Authorization == "" {
 		return &apimodels.Error{
 			Status:  http.StatusForbidden,
-			Error:   valerror.INVALID_TOKEN,
+			Error:   apierror.InvalidToken,
 			Message: "Missing token",
 		}
 
