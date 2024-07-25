@@ -50,9 +50,6 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 		Path:             API_PATH + configuration.ApiName + "/" + configuration.Version + "/info",
 		Method:           apimodels.GetMethod,
 		Listener:         services.ValhallaCoreInfoHttp,
-		Checks:           services.EmptyCheck,
-		Secured:          false,
-		Database:         false,
 		ResponseMimeType: apimodels.MimeApplicationJson,
 		RequestMimeType:  apimodels.MimeApplicationJson,
 	})

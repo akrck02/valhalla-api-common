@@ -58,7 +58,7 @@ func sendJsonCatchingErrors(context *apimodels.ApiContext, writer http.ResponseW
 	// send response
 	response.ResponseTime = elapsed.Nanoseconds()
 	context.Response = *response
-	SendResponse(writer, response.Code, response.Response, apimodels.MimeApplicationJson)
+	SendResponse(writer, response.Code, response, apimodels.MimeApplicationJson)
 }
 
 func sendResponseCatchingErrors(context *apimodels.ApiContext, writer http.ResponseWriter) {
