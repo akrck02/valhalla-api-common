@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"regexp"
 
 	apierror "github.com/akrck02/valhalla-core-sdk/error"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
@@ -49,5 +50,34 @@ func Request(r *http.Request, context *apimodels.ApiContext) *apimodels.Error {
 		}
 	}
 
+	// Get possible url path parameters
+	pathParams := getPathParamNames(context.Trazability.Endpoint.Path)
+	for _, param := range pathParams {
+		context.Request.Params[param] = r.PathValue(param)
+	}
+
 	return nil
+}
+
+func getPathParamNames(path string) []string {
+	params := []string{}
+
+	//regex to find path parameters
+	regex, err := regexp.Compile("{(.*?)}")
+
+	if err != nil {
+		return params
+	}
+
+	params = regex.FindAllString(path, -1)
+
+	if params == nil {
+		params = []string{}
+	}
+
+	for i, param := range params {
+		params[i] = param[1 : len(param)-1]
+	}
+
+	return params
 }

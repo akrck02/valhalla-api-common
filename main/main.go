@@ -19,7 +19,7 @@ func main() {
 		config,
 		[]apimodels.Endpoint{
 			{
-				Path:             "health",
+				Path:             "/health",
 				Method:           apimodels.PostMethod,
 				Listener:         services.Health,
 				Checks:           services.EmptyCheck,
