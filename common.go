@@ -41,7 +41,7 @@ func Start(configuration configuration.APIConfiguration, endpoints []apimodels.E
 	// Add API path to endpoints
 	newEndpoints := []apimodels.Endpoint{}
 	for _, endpoint := range endpoints {
-		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + "/" + endpoint.Path
+		endpoint.Path = API_PATH + configuration.ApiName + "/" + configuration.Version + endpoint.Path
 		newEndpoints = append(newEndpoints, endpoint)
 	}
 
