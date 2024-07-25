@@ -87,6 +87,10 @@ func registerEndpoints(endpoints []apimodels.Endpoint) {
 
 		log.FormattedInfo("Endpoint ${0} registered.", endpoint.Path)
 
+		// set defaults
+		setEndpointDefaults(&endpoint)
+
+		// register endpoint
 		http.HandleFunc(endpoint.Path, func(writer http.ResponseWriter, request *http.Request) {
 
 			// log the request
@@ -130,6 +134,26 @@ func registerEndpoints(endpoints []apimodels.Endpoint) {
 		})
 
 	}
+}
+
+func setEndpointDefaults(endpoint *apimodels.Endpoint) {
+
+	if nil == endpoint.Checks {
+		endpoint.Checks = services.EmptyCheck
+	}
+
+	if nil == endpoint.Listener {
+		endpoint.Listener = services.NotImplemented
+	}
+
+	if endpoint.RequestMimeType == "" {
+		endpoint.RequestMimeType = apimodels.MimeApplicationJson
+	}
+
+	if endpoint.ResponseMimeType == "" {
+		endpoint.ResponseMimeType = apimodels.MimeApplicationJson
+	}
+
 }
 
 func applyMiddleware(context *apimodels.ApiContext) *apimodels.Error {

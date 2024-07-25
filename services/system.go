@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"time"
 
+	apierror "github.com/akrck02/valhalla-core-sdk/error"
 	apimodels "github.com/akrck02/valhalla-core-sdk/models/api"
 )
 
@@ -45,6 +46,15 @@ func Health(context *apimodels.ApiContext) (*apimodels.Response, *apimodels.Erro
 		Code:     http.StatusOK,
 		Response: "OK",
 	}, nil
+}
+
+func NotImplemented(context *apimodels.ApiContext) (*apimodels.Response, *apimodels.Error) {
+
+	return nil, &apimodels.Error{
+		Error:   apierror.NotImplemented,
+		Message: "Not implemented",
+		Status:  http.StatusNotImplemented,
+	}
 }
 
 func EmptyCheck(context *apimodels.ApiContext) *apimodels.Error {
