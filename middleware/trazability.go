@@ -20,7 +20,7 @@ func Trazability(context *apimodels.ApiContext) *apimodels.Error {
 		// we're assuming that the user is the launcher for now
 		// this MUST be changed in the future
 		context.Trazability.Launcher = apimodels.Launcher{
-			Id:           context.Trazability.User.ID,
+			Id:           context.Trazability.User.Id,
 			LauncherType: apimodels.USER,
 		}
 
